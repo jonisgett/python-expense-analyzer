@@ -1,4 +1,5 @@
 from datetime import datetime
+import json
 
 # Create a class for an Expense
 class Expense:
@@ -18,13 +19,18 @@ Date: {self.date}"""
 class ExpenseTracker:
     # constructor
     def __init__(self):
-        self.expenses = [] # list to old all the Expense objects
+        self.expenses = [] # list to hold all the Expense objects
+        self.load_expenses()
     # method for adding an expense
     def add_expense(self, expense):
         self.expenses.append(expense)
+        print("Expense added!")
+        self.save_expenses()
     # method for deleting an expense
     def remove_expense(self, expense):
         self.expenses.remove(expense)
+        print("Expense deleted!")
+        self.save_expenses()
     # method for viewing a list of current expenses
     def view_expenses_numbered_sorted(self):
         if not self.expenses:
@@ -40,10 +46,30 @@ class ExpenseTracker:
         return sorted_expenses
     # method for loading expenses from a json file
     def load_expenses(self):
-        pass
+        try:
+            with open('expenses.json', 'r') as file:
+                expense_dicts = json.load(file)
+                for expense_dict in expense_dicts:
+                    expense = Expense(expense_dict['amount'],
+                    expense_dict['category'],
+                    expense_dict['description'],
+                    expense_dict['date'])
+                    self.expenses.append(expense)
+        except FileNotFoundError:
+            return
+
     # method for saving expenses to a json file
     def save_expenses(self):
-        pass
+        expense_dicts = []
+        for expense in self.expenses:
+            expense_dict = {'amount': expense.amount,
+                            'category': expense.category,
+                            'description': expense.description,
+                            'date': expense.date}
+            expense_dicts.append(expense_dict)
+        # Write to a json file
+        with open('expenses.json', 'w') as file:
+            json.dump(expense_dicts, file, indent=2)
 
 # Create/Show User Menu
 def show_menu():
