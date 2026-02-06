@@ -44,6 +44,20 @@ class ExpenseTracker:
                 print(f"{expense}")
                 print()
         return sorted_expenses
+    # method to view category totals
+    def view_by_category(self):
+        category_dict = {}
+        total_amount = 0
+        for expense in self.expenses:
+            category_dict[expense.category] = category_dict.get(expense.category, 0) + expense.amount
+            total_amount += expense.amount
+        # sort by amounts
+        sorted_dict = sorted(category_dict.items(), key=lambda x: x[1], reverse=True)
+        print("===Category Totals===")
+        for key, value in sorted_dict:
+            print(f"{key}: {value:.2f}")
+        print(f"Total: {total_amount:.2f}")
+
     # method for loading expenses from a json file
     def load_expenses(self):
         try:
@@ -73,11 +87,12 @@ class ExpenseTracker:
 
 # Create/Show User Menu
 def show_menu():
-    print("===Expense Tracker===")
+    print("\n===Expense Tracker===")
     print("1. View Expenses")
     print("2. Add Expense")
     print("3. Delete Expense")
-    print("4. Quit")
+    print("4. View Category Spending")
+    print("5. Quit")
     print("=====================")
 
 def get_menu_choice():
@@ -86,7 +101,7 @@ def get_menu_choice():
         choice = input("Please choose a number from the menu: ")
         try:
             choice_int = int(choice)
-            if choice_int in range(1, 5):
+            if choice_int in range(1, 6):
                 break
             else: 
                 print("Invalid input. The number you chose is not on the menu!")
@@ -168,6 +183,8 @@ def main():
             else:
                 print("No expenses yet!")
         elif user_menu_choice == 4:
+            tracker.view_by_category()
+        elif user_menu_choice == 5:
             print("Goodbye!")
             break
 
